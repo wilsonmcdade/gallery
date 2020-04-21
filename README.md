@@ -69,14 +69,33 @@ an Openshift Origin cluster.
 ## Local Development
 Below are instructions for running gallery locally. It assumes that you have already forked and cloned this repository onto your local machine, and have Python3 installed.
 
-1. Change the line in `__init__.py` that sets the config file from `config.env.py` to `localconfig.env.py`.
+1. Copy `localconfig-sample.env.py` to `config.py`, ask an RTP for the gallery dev OIDC secret and fill it in.
 
-2. Copy `localconfig-sample.env.py` to `localconfig.env.py`, get gallery dev secrets from an RTP, and fill in.
+2. Create a [virtual environment](https://docs.python.org/3/library/venv.html), `python3 -m venv venv`
 
-3. Create a [virtual environment](https://docs.python.org/3/library/venv.html), `python3 -m venv venv`
+3. `source venv/bin/activate` to enter the virtual environment
 
-4. `source venv/bin/activate` to enter the virtual environment
+4. `pip install -r requirements.txt`
 
-5. `pip install -r requirements.txt`
+5. Create the storage directory
+`mkdir ./storage`
 
-6. `python3 wsgi.py`
+6. Initialise the local db. Sqllite doesn't handle the standard migration well, and you need to initialise the lockdown (this sets it to false).
+Commands prepended by `>>>` are executed within the flask shell
+```
+flask shell
+>>> from gallery import db
+>>> from gallery.models import Administration
+>>> lockdown = Administration(lockdown=False)
+>>> db.create_all()
+>>> gallery.session.add(lockdown)
+>>> db.session.commit()
+>>> exit()
+
+flask db stamp
+```
+
+7. Create the root directory
+`flask init-root`
+
+8. `python3 wsgi.py`
