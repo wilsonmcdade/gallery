@@ -13,15 +13,18 @@ def is_member_of_group(member: CSHMember, group: str) -> bool:
 
 
 class LDAPWrapper(object):
-    def __init__(self, ldap: Optional[CSHLDAP], eboard: Optional[List[str]] = None, rtp: Optional[List[str]] = None):
+    def __init__(self, ldap: Optional[CSHLDAP], eboard: Optional[List[str]] = None, rtp: Optional[List[str]] = None, alumni: Optional[List[str]] = None):
         self._ldap = ldap
         self._eboard: List[str] = []
         self._rtp: List[str] = []
+        self._alumni: List[str] = []
 
         if eboard:
             self._eboard = eboard
         if rtp:
             self._rtp = rtp
+        if alumni:
+            self._alumni = alumni
 
     def convert_uuid_to_displayname(self, uuid: str) -> str:
         if uuid == "root":
@@ -42,6 +45,8 @@ class LDAPWrapper(object):
         return rtp_group.check_member(self._ldap.get_member(uid, uid=True))
 
     def is_alumni(self, uid: str) -> bool:
+        if self._ldap is None:
+            return uid in self._alumni
         return not is_member_of_group(self._ldap.get_member(uid, uid=True), 'current_student')
 
     def get_members(self) -> List[Dict[str, str]]:

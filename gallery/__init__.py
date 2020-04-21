@@ -84,6 +84,7 @@ else:
         None,
         app.config.get("EBOARD_UIDS", "").split(","),
         app.config.get("RTP_UIDS", "").split(","),
+        app.config.get("ALUMNI_UIDS", "").split(","),
     )
 
 app.add_template_global(ldap, name="ldap")
