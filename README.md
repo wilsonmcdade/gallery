@@ -88,7 +88,7 @@ flask shell
 >>> from gallery.models import Administration
 >>> lockdown = Administration(lockdown=False)
 >>> db.create_all()
->>> gallery.session.add(lockdown)
+>>> db.session.add(lockdown)
 >>> db.session.commit()
 >>> exit()
 
